@@ -1,0 +1,16 @@
+flutter_native_splash:
+
+  color: "#ffffff" # Your background color
+  image: assets/images/splashScreen.png
+  android: true
+  ios: true
+  android_gravity: center
+  ios_content_mode: center
+
+
+  android_12:
+    image: assets/images/splashScreen.png
+    color: "#ffffff"
+
+
+
