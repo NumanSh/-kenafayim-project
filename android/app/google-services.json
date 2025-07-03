@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "362845805927",
+    "project_id": "knafaim-173e7",
+    "storage_bucket": "knafaim-173e7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:362845805927:android:0343a37b48ab13134f23c2",
+        "android_client_info": {
+          "package_name": "com.knafayim.knafayim_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASzs-5cYh6v7aP6OrCFpJVFXbTWXeP8lw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

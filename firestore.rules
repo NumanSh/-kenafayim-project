@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isStaff() {
+      return isAuthenticated() && 
+        (getUserData().role == 'staff');
+    }
+    
+    function isMentor() {
+      return isAuthenticated() && getUserData().role == 'mentor';
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Anyone can read their own profile
+      // Staff can read all profiles
+      // Only staff can create new users
+      // Users can update their own profile, but staff can update any profile
+      allow read: if isOwner(userId) || isStaff() || isMentor();
+      allow create: if isStaff();
+      allow update: if isOwner(userId) || isStaff();
+      allow delete: if isStaff();
+      
+      // Subcollections
+      match /favorites/{docId} {
+        allow read: if isOwner(userId) || isStaff();
+        allow write: if isOwner(userId) || isStaff();
+      }
+      
+      match /notes/{docId} {
+        allow read: if isOwner(userId) || isStaff();
+        allow write: if isStaff();
+      }
+    }
+    
+    // Lessons collection
+    match /lessons/{lessonId} {
+      // Anyone can read lessons
+      // Only staff can create, update, or delete lessons
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isStaff();
+      
+      // Subcollections
+      match /attendees/{userId} {
+        allow read: if isAuthenticated();
+        allow write: if isStaff() || isMentor();
+      }
+    }
+    
+    // Calendar events collection
+    match /events/{eventId} {
+      // Anyone can read events
+      // Only staff can create, update, or delete events
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isStaff();
+    }
+    
+    // Reports collection
+    match /reports/{reportId} {
+      // Only staff can read, create, update, or delete reports
+      allow read, write: if isStaff();
+    }
+    
+    // Settings collection
+    match /settings/{settingId} {
+      // Anyone can read public settings
+      // Only staff can update settings
+      allow read: if isAuthenticated();
+      allow write: if isStaff();
+    }
+    
+    // Default deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
